@@ -1,22 +1,31 @@
+//Written by Chinchillax
+//Spreadsheet is here: https://docs.google.com/spreadsheets/d/1Wsj45jwHofcWpow4hXgJa3-BSOQcD1FnKSEcWREKgXA/edit#gid=0
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Arrays;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
-//925,510,718 words. Almost one billion
-
-public class TotalWordCount 
+public class TotalWordCount //This does not print out a CSV.
 {
-	public final static int STORYCOUNT=79236; //If the amount of stories changes, change this
+	//public final static int STORYCOUNT=47167;
+	//public final static int STORYCOUNT=60613;
+	//public final static int STORYCOUNT=70420;
+	//public final static int STORYCOUNT=79236;
+	public final static int STORYCOUNT=87519; //If the amount of stories changes, change this
 	
-	private static final String filePath = "index.json";
+	
+	//private static final String filePath = "index-20130616.json";
+	//private static final String filePath = "index-20131015.json";
+	//private static final String filePath = "index-20140120.json";
+	//private static final String filePath = "index-20140418.json";
+	private static final String filePath = "index-20140719.json";
+	
 	public static long allWordCount=0;
 	public static long storyCount=0;
 	public static long storiesBelow5k=0;
@@ -37,10 +46,11 @@ public class TotalWordCount
 	public static int[] viewArray= new int[STORYCOUNT];
 	public static int viewCount=0;
 	
-	
 	public static int completeStories=0;
 	public static int incompleteStories=0;
 	public static int hiatusStories=0;
+	public static int cancelledStories=0;
+	
 	
 	public static int adventureCount=0;
 	public static int aUCount=0;
@@ -89,7 +99,7 @@ public class TotalWordCount
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 			
-			for(int i=0; i<183314; i++) //Highest current ID
+			for(int i=0; i<250000; i++) //Highest current ID
 			{
 				String temp= String.valueOf(i);
 				JSONObject obj= (JSONObject) jsonObject.get(temp);
@@ -98,7 +108,7 @@ public class TotalWordCount
 					continue;
 				}
 				
-				String title= (String) obj.get("title");
+				//String title= (String) obj.get("title");
 				long contentRating =(Long) obj.get("content_rating");
 				
 				if(contentRating==0)
@@ -118,13 +128,12 @@ public class TotalWordCount
 				wordCountArray[(int) storyCount] =(int) words;
 				
 				long comments =  (Long) obj.get("comments");
+				//System.out.println("Comments: "+ comments);
 				commentCount+=comments;
 				commentArray[(int) storyCount] =(int) comments;
 				
 				if(comments==0)
-				{
-					commentLessCount++;
-				}
+				{commentLessCount++;}
 				
 				long like =  (Long) obj.get("likes");
 				likeCount+=like;
@@ -165,6 +174,10 @@ public class TotalWordCount
 				else if(status.equals("Complete"))
 				{
 					completeStories++;
+				}
+				else if(status.equals("Cancelled"))
+				{
+					cancelledStories++;
 				}
 				else
 				{
@@ -222,6 +235,9 @@ public class TotalWordCount
 			System.out.println("Stories complete: "+completeStories+ " which is about "+(( (double) completeStories/ (double) storyCount)*100)+ "% of stories on the site.");
 			System.out.println("Stories incomplete: "+incompleteStories+ " which is about "+(( (double) incompleteStories/ (double) storyCount)*100)+ "% of stories on the site.");
 			System.out.println("Stories on hiatus: "+hiatusStories+ " which is about "+(( (double) hiatusStories/ (double) storyCount)*100)+ "% of stories on the site.");
+			System.out.println("Stories on cancelled: "+cancelledStories+ " which is about "+(( (double) cancelledStories/ (double) storyCount)*100)+ "% of stories on the site.");
+			
+			
 			
 			
 			Arrays.sort(storyLikes);
